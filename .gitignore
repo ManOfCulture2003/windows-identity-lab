@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+*.iso
+*.ova
+*.vdi
+*.vmdk
+*.vhd*
+*.evtx
+*private*
+*.key
+*.pfx

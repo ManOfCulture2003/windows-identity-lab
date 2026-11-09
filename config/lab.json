@@ -1,0 +1,13 @@
+{
+  "domain": "ad.northstar.test",
+  "network_name": "rh-identity-lab",
+  "subnet": "10.77.0.0/24",
+  "network_mode": "internal",
+  "host_reserve_gib": 40,
+  "media_allowance_gib": 16,
+  "memory_headroom_gib": 4,
+  "vms": [
+    {"name": "RH-LAB-DC01", "role": "dc", "address": "10.77.0.10", "ram_gib": 4, "disk_gib": 50, "cpus": 2},
+    {"name": "RH-LAB-CL01", "role": "client", "address": "10.77.0.20", "ram_gib": 4, "disk_gib": 64, "cpus": 2}
+  ]
+}
