@@ -1,6 +1,6 @@
-# Windows identity lab — readiness tools
+# Windows identity lab
 
-This is the first implemented part of a planned, isolated Windows administration lab. **The Active Directory lab is not deployed or verified yet.** These tools check a fictional lab configuration and the host's current resources without changing VMs, accounts, networking or security settings.
+An isolated Windows administration lab for a fictional company. The Server domain controller, DNS and initial directory structure have been exercised in a real VM. **The full lab is still in progress:** client joining, user lifecycle automation, access tests and recovery exercises are not complete. The readiness checker is read-only; the guest setup scripts change only the explicitly selected lab guest.
 
 ## Run the checks
 
@@ -36,6 +36,20 @@ Only `ad.northstar.test`, two named lab guests and an internal network are accep
 The script refuses a different UUID, a non-VirtualBox machine, a Windows client, a domain member, multiple/disconnected adapters, default routes or unexpected IP addresses. Guest checks cannot prove the hypervisor's network mode: the host-side isolation check is still required. It configures `10.77.0.10/24`, DNS pointing to itself, the name `RH-LAB-DC01`, and the AD DS/DNS/Group Policy management components. It leaves IPv6 and the firewall enabled. It does not create a domain or restart automatically. Restart only this guest afterward.
 
 Audit stages are recorded in `C:\ProgramData\NorthstarLab\Logs\server-bootstrap.jsonl`. Failure stops the script but can leave partial changes; inspect the log and actual network/features before retrying. There is no automatic rollback. Return to a verified pre-install backup or rebuild this dedicated disposable guest if needed; never apply teardown to another VM.
+
+## Set up the directory structure
+
+After creating and verifying `ad.northstar.test`, run `tools/Initialize-LabDirectory.ps1` inside the domain controller with its `-ExpectedVmUuid`. Use `-WhatIf` first. It creates a protected `NorthstarLab` OU and four child OUs: People, Groups, Workstations and DisabledPeople. It refuses mismatched lab identity and unrelated objects that collide with its expected names.
+
+Department global groups nest into domain-local permission groups:
+
+| Membership group | Permission groups | Intended access, not yet applied to files |
+| --- | --- | --- |
+| GG_HR_Staff | DL_HR_Modify | Modify HR files |
+| GG_IT_Staff | DL_IT_Modify | Modify IT files |
+| GG_Auditors | DL_HR_Read, DL_IT_Read | Read both departments |
+
+The script creates no user accounts and grants no file access. It preserves extra existing memberships; rerunning it adds missing managed objects/links but is not a general drift-remediation tool. A failed run may leave partial changes. Inspect the directory before retrying; it never deletes existing objects. See `docs/verification.md` for actual checks and remaining limitations.
 
 ## Remaining lab work
 

@@ -1,0 +1,54 @@
+{
+    "ComputerName":  "RH-LAB-DC01",
+    "Domain":  "ad.northstar.test",
+    "PartOfDomain":  true,
+    "ProductType":  2,
+    "DomainDetails":  {
+                          "DNSRoot":  "ad.northstar.test",
+                          "NetBIOSName":  "NORTHSTAR",
+                          "DomainMode":  10,
+                          "PDCEmulator":  "RH-LAB-DC01.ad.northstar.test"
+                      },
+    "Services":  [
+                     {
+                         "Name":  "DFSR",
+                         "Status":  4
+                     },
+                     {
+                         "Name":  "DNS",
+                         "Status":  4
+                     },
+                     {
+                         "Name":  "Netlogon",
+                         "Status":  4
+                     },
+                     {
+                         "Name":  "NTDS",
+                         "Status":  4
+                     }
+                 ],
+    "Shares":  [
+                   {
+                       "Name":  "NETLOGON",
+                       "Path":  "C:\\WINDOWS\\SYSVOL\\sysvol\\ad.northstar.test\\SCRIPTS"
+                   },
+                   {
+                       "Name":  "SYSVOL",
+                       "Path":  "C:\\WINDOWS\\SYSVOL\\sysvol"
+                   }
+               ],
+    "DnsRecords":  [
+                       {
+                           "Name":  "_ldap._tcp.dc._msdcs.ad.northstar.test",
+                           "Type":  33,
+                           "NameTarget":  "rh-lab-dc01.ad.northstar.test",
+                           "Port":  389
+                       },
+                       {
+                           "Name":  "rh-lab-dc01.ad.northstar.test",
+                           "Type":  1,
+                           "NameTarget":  null,
+                           "Port":  null
+                       }
+                   ]
+}

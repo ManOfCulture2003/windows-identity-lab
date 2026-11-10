@@ -1,0 +1,77 @@
+
+Directory Server Diagnosis
+
+
+Performing initial setup:
+
+   Trying to find home server...
+
+   Home Server = RH-LAB-DC01
+
+   * Identified AD Forest. 
+   Done gathering initial info.
+
+
+Doing initial required tests
+
+   
+   Testing server: Default-First-Site-Name\RH-LAB-DC01
+
+      Starting test: Connectivity
+
+         ......................... RH-LAB-DC01 passed test Connectivity
+
+
+
+Doing primary tests
+
+   
+   Testing server: Default-First-Site-Name\RH-LAB-DC01
+
+      Starting test: Advertising
+
+         ......................... RH-LAB-DC01 passed test Advertising
+
+      Starting test: SysVolCheck
+
+         ......................... RH-LAB-DC01 passed test SysVolCheck
+
+      Starting test: NetLogons
+
+         ......................... RH-LAB-DC01 passed test NetLogons
+
+      Starting test: Services
+
+         ......................... RH-LAB-DC01 passed test Services
+
+   
+      Starting test: DNS
+
+         
+
+         DNS Tests are running and not hung. Please wait a few minutes...
+
+         ......................... RH-LAB-DC01 passed test DNS
+
+   
+   Running partition tests on : ForestDnsZones
+
+   
+   Running partition tests on : DomainDnsZones
+
+   
+   Running partition tests on : Schema
+
+   
+   Running partition tests on : Configuration
+
+   
+   Running partition tests on : ad
+
+   
+   Running enterprise tests on : ad.northstar.test
+
+      Starting test: DNS
+
+         ......................... ad.northstar.test passed test DNS
+
