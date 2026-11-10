@@ -1,0 +1,53 @@
+{
+  "EvidenceType": "Observed guest inventory after bootstrap and restart",
+  "Caption": "Microsoft Windows Server 2025 Standard Evaluation",
+  "ComputerName": "RH-LAB-DC01",
+  "Domain": "WORKGROUP",
+  "PartOfDomain": false,
+  "Interfaces": [
+    {
+      "InterfaceAlias": "Ethernet",
+      "IPAddress": "10.77.0.10",
+      "PrefixLength": 24
+    },
+    {
+      "InterfaceAlias": "Loopback Pseudo-Interface 1",
+      "IPAddress": "127.0.0.1",
+      "PrefixLength": 8
+    }
+  ],
+  "DefaultRoutes": [],
+  "DnsServers": [
+    {
+      "InterfaceAlias": "Ethernet",
+      "ServerAddresses": [
+        "10.77.0.10"
+      ]
+    },
+    {
+      "InterfaceAlias": "Loopback Pseudo-Interface 1",
+      "ServerAddresses": []
+    }
+  ],
+  "InstalledRoles": [
+    "AD-Domain-Services",
+    "DNS",
+    "FileAndStorage-Services",
+    "Storage-Services",
+    "NET-Framework-45-Features",
+    "NET-Framework-45-Core",
+    "NET-WCF-Services45",
+    "NET-WCF-TCP-PortSharing45",
+    "GPMC",
+    "Windows-Defender",
+    "RSAT",
+    "RSAT-Role-Tools",
+    "RSAT-AD-Tools",
+    "RSAT-AD-PowerShell",
+    "System-DataArchiver",
+    "PowerShellRoot",
+    "PowerShell",
+    "WoW64-Support"
+  ],
+  "DomainDeploymentVerified": false
+}

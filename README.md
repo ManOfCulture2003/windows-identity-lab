@@ -29,6 +29,14 @@ That stage needs 106 GiB free disk and 8 GiB available RAM with the supplied con
 
 Only `ad.northstar.test`, two named lab guests and an internal network are accepted. This intentionally prevents using the readiness tool as a generic production deployment tool. Existing VMs are outside its scope.
 
-## Still needed
+## Prepare the Server guest
+
+`tools/Initialize-LabServer.ps1` runs **inside a fresh, standalone Server VM**, as its Administrator. First verify in VirtualBox that its only adapter uses the internal `rh-identity-lab` network. Get that VM's hardware UUID with `VBoxManage showvminfo`; pass it as `-ExpectedVmUuid` when running the script. Start with `-WhatIf` to review the action, then run without `-WhatIf` to apply it.
+
+The script refuses a different UUID, a non-VirtualBox machine, a Windows client, a domain member, multiple/disconnected adapters, default routes or unexpected IP addresses. Guest checks cannot prove the hypervisor's network mode: the host-side isolation check is still required. It configures `10.77.0.10/24`, DNS pointing to itself, the name `RH-LAB-DC01`, and the AD DS/DNS/Group Policy management components. It leaves IPv6 and the firewall enabled. It does not create a domain or restart automatically. Restart only this guest afterward.
+
+Audit stages are recorded in `C:\ProgramData\NorthstarLab\Logs\server-bootstrap.jsonl`. Failure stops the script but can leave partial changes; inspect the log and actual network/features before retrying. There is no automatic rollback. Return to a verified pre-install backup or rebuild this dedicated disposable guest if needed; never apply teardown to another VM.
+
+## Remaining lab work
 
 Lawful Windows guest media and license acceptance, enough resources, a verified guest boot, AD/DNS/GPO setup, lifecycle automation, real access tests, five observed support cases, and backup/restore verification. The connected SIEM project must wait until those Project 1 checks pass. No real credentials or host logs belong in this repository.
