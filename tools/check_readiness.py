@@ -66,8 +66,10 @@ def validate_config(config):
     return config
 
 
-def assess(config, host):
+def assess(config, host, scope='project1'):
     validate_config(config)
+    if scope not in ('project1', 'server-install'):
+        raise ValueError('Unknown resource-check scope')
     exact_keys(host, 'captured_at os_caption ram_available_gib disk_free_gib drive_type virtualbox_version hypervisor_present')
     for key in ('ram_available_gib', 'disk_free_gib'):
         number(host[key], 0, 1000000)
@@ -81,8 +83,9 @@ def assess(config, host):
     if captured.tzinfo is None:
         raise ValueError('Inventory timestamp must include a timezone')
     age = (datetime.now(timezone.utc) - captured).total_seconds()
-    disk = sum(v['disk_gib'] for v in config['vms']) + config['host_reserve_gib'] + config['media_allowance_gib']
-    ram = sum(v['ram_gib'] for v in config['vms']) + config['memory_headroom_gib']
+    guests = config['vms'] if scope == 'project1' else [v for v in config['vms'] if v['role'] == 'dc']
+    disk = sum(v['disk_gib'] for v in guests) + config['host_reserve_gib'] + config['media_allowance_gib']
+    ram = sum(v['ram_gib'] for v in guests) + config['memory_headroom_gib']
     blockers = []
     if age < -60 or age > 900:
         blockers.append('Inventory is stale or future-dated; collect it again')
@@ -96,7 +99,7 @@ def assess(config, host):
         blockers.append(f'Disk budget short by {disk-host["disk_free_gib"]:.2f} GiB')
     if host['ram_available_gib'] < ram:
         blockers.append(f'Available RAM short by {ram-host["ram_available_gib"]:.2f} GiB')
-    return {'resource_gate': 'blocked' if blockers else 'pass', 'required_disk_gib': disk,
+    return {'scope': scope, 'resource_gate': 'blocked' if blockers else 'pass', 'required_disk_gib': disk,
             'required_available_ram_gib': ram, 'blockers': blockers,
             'deployment_verified': False,
             'remaining_gates': ['Guest license/media verification and user acceptance',
@@ -108,9 +111,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, default=Path(__file__).resolve().parents[1] / 'config/lab.json')
     parser.add_argument('--inventory', type=Path, required=True)
+    parser.add_argument('--scope', choices=['project1', 'server-install'], default='project1',
+                        help='Budget both guests (default), or only the initial Server installation')
     args = parser.parse_args()
     try:
-        result = assess(read_json(args.config), read_json(args.inventory))
+        result = assess(read_json(args.config), read_json(args.inventory), args.scope)
     except (ValueError, TypeError, OSError, RecursionError, OverflowError) as exc:
         print(json.dumps({'resource_gate': 'invalid_input', 'error': str(exc), 'deployment_verified': False}))
         return 2

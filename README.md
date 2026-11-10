@@ -19,6 +19,14 @@ Exit codes: 0 means the resource gate passed, 1 means prerequisites are blocked,
 
 The configuration reserves 50 GiB for the DC, 64 GiB for the client, 16 GiB for media/staging and 40 GiB for the host: 170 GiB free required. It also requires 12 GiB currently available memory. These are conservative project choices, not vendor minimums. Dynamic disks do not remove the need to budget for growth.
 
+To check whether there is room to install just the Server guest first:
+
+```powershell
+python .\tools\check_readiness.py --inventory ..\lab-inventory-private.json --scope server-install
+```
+
+That stage needs 106 GiB free disk and 8 GiB available RAM with the supplied configuration. It keeps the same host and media reserves and budgets the Server disk's full possible size. A stage passing does not mean there is room for both guests. Collect fresh measurements and reassess before adding the client, running guests together or taking backups. These checks budget new allocations; they do not subtract disks or RAM already allocated to an existing guest, monitor growth, or start a VM. Keep at least 40 GiB free on the host during installation. The default remains the full Project 1 check.
+
 Only `ad.northstar.test`, two named lab guests and an internal network are accepted. This intentionally prevents using the readiness tool as a generic production deployment tool. Existing VMs are outside its scope.
 
 ## Still needed

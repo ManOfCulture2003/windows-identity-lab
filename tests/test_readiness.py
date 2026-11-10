@@ -29,6 +29,26 @@ class ReadinessTests(unittest.TestCase):
         self.host.update(ram_available_gib=8.9, disk_free_gib=127)
         self.assertEqual(len(module.assess(self.config, self.host)['blockers']), 2)
 
+    def test_server_stage_can_pass_without_passing_full_lab(self):
+        self.host.update(ram_available_gib=8, disk_free_gib=106)
+        result = module.assess(self.config, self.host, 'server-install')
+        self.assertEqual(result['resource_gate'], 'pass')
+        self.assertEqual(result['scope'], 'server-install')
+        self.assertEqual(result['required_disk_gib'], 106)
+        self.assertEqual(result['required_available_ram_gib'], 8)
+        self.assertFalse(result['deployment_verified'])
+        self.assertEqual(module.assess(self.config, self.host)['resource_gate'], 'blocked')
+
+    def test_server_stage_keeps_reserves_and_validates_whole_config(self):
+        for field, value in [('disk_free_gib', 105.99), ('ram_available_gib', 7.99)]:
+            with self.subTest(field=field):
+                host = dict(self.host, **{field: value})
+                self.assertEqual(module.assess(self.config, host, 'server-install')['resource_gate'], 'blocked')
+        config = copy.deepcopy(self.config)
+        config['vms'][1]['address'] = '8.8.8.8'
+        with self.assertRaises(ValueError): module.assess(config, self.host, 'server-install')
+        with self.assertRaises(ValueError): module.assess(self.config, self.host, 'skip')
+
     def test_negative_nonfinite_bool_and_string_measurements_rejected(self):
         for value in [-1, float('nan'), float('inf'), True, '170', None]:
             with self.subTest(value=value), self.assertRaises(ValueError):
